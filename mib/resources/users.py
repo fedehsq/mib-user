@@ -51,6 +51,18 @@ def get_user(user_id):
 
     return jsonify(user.serialize()), 200
 
+def get_all_users():
+    """ Get all users except for the user
+    user_email """
+
+    users = UserManager.get_all_users()
+    print("sono nel mib-user")
+    print(users)
+    if users is None:
+        print("non c'è")
+        response = {'status': 'There are no users registered'}
+        return jsonify(response), 404
+    return jsonify(users_response = [user.serialize() for user in users]), 200
 
 def get_user_by_email(user_email):
     """
