@@ -2,7 +2,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from mib import db
 
-
 class User(db.Model):
     """Representation of User model."""
 
@@ -10,10 +9,10 @@ class User(db.Model):
     __tablename__ = 'User'
 
     # A list of fields to be serialized
-    SERIALIZE_LIST = ['id', 'email', 'is_active', 'authenticated', 'deleted', 'is_blocked']
+    SERIALIZE_LIST = ['id', 'email', 'is_active', 'authenticated', 'deleted', 'is_blocked', 'photo']
 
     # All fields of user
-    photo = db.Column(db.Unicode(8196), default = 'profile_pics/profile_pic.svg')
+    photo = db.Column(db.String)
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     email = db.Column(db.Unicode(128), nullable = False, unique = True)
     first_name = db.Column(db.Unicode(128), nullable = False, unique = False)
