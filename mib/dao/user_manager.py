@@ -11,8 +11,8 @@ class UserManager(Manager):
 
     def get_all_users():
         """ 
-        This metod gets from the database 
-        all registered users 
+            This metod gets from the database 
+            all users except for the one with user_email 
         """
         return User.query.all()
     

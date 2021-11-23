@@ -1,11 +1,14 @@
 from flask import request, jsonify
 from mib.dao.user_manager import UserManager
+from mib.dao.badword_manager import BadWordManager
 from mib.models.user import User
-import datetime
+from mib.models.badword import BadWord
+from datetime import datetime
 
 
 def create_user():
-    """This method allows the creation of a new user.
+    """
+    This method allows the creation of a new user.
     """
     post_data = request.get_json()
     email = post_data.get('email')
@@ -18,15 +21,22 @@ def create_user():
         }), 200
 
     user = User()
-    birthday = datetime.datetime.strptime(post_data.get('birthdate'), '%Y-%m-%d')
+    birthday = datetime.strptime(post_data.get('birthdate'), '%d/%m/%Y')
     user.set_email(email)
     user.set_password(password)
     user.set_first_name(post_data.get('firstname'))
     user.set_last_name(post_data.get('lastname'))
-    user.set_birthday(post_data.get('birthdate'))
+    user.set_birthday(birthday)
     user.set_photo(post_data.get('photo'))
-
     UserManager.create_user(user)
+
+    # badwords for user
+    badwords = post_data.get('badwords').split(', ')
+    for word in badwords:
+        badword = BadWord()
+        badword.word = word
+        badword.user_id = user.id
+        BadWordManager.create_badword(badword)
 
     response_object = {
         'user': user.serialize(),
@@ -35,6 +45,42 @@ def create_user():
     }
 
     return jsonify(response_object), 201
+
+def edit_user(user_id):
+    """
+        This method allows the edit of a user.
+    """
+    post_data = request.get_json()
+    user = UserManager.retrieve_by_id(user_id)
+    birthday = datetime.strptime(post_data.get('birthdate'), '%d/%m/%Y')
+    user.set_password(post_data.get('password'))
+    user.set_first_name(post_data.get('firstname'))
+    user.set_last_name(post_data.get('lastname'))
+    user.set_birthday(birthday)
+    user.set_photo(post_data.get('photo'))
+    UserManager.update_user(user)
+
+    # delete all old badwords
+    badwords = BadWordManager.retrieve_badwords_by_user_id(user.id)
+    for word in badwords:
+        BadWordManager.delete_badword(word)
+
+    # inserts new badwords
+    badwords = post_data.get('badwords').split(', ')
+    if badwords[0] != '':
+        for word in badwords:
+            badword = BadWord()
+            badword.word = word
+            badword.user_id = user.id
+            BadWordManager.create_badword(badword)
+
+    response_object = {
+        'user': user.serialize(),
+        'status': 'success',
+        'message': 'Successfully updated',
+    }
+
+    return jsonify(response_object), 200
 
 
 def get_user(user_id):
@@ -50,6 +96,27 @@ def get_user(user_id):
         return jsonify(response), 404
 
     return jsonify(user.serialize()), 200
+
+def get_badwords(user_id):
+    """
+    Get a user by its current id.
+
+    :param user_id: user it
+    :return: json response
+    """
+    badwords = BadWordManager.retrieve_badwords_by_user_id(user_id)
+    response_object = {
+        'badwords': [word.serialize() for word in badwords],
+        'status': 'success',
+    }
+    return jsonify(response_object), 200
+
+def get_all_users():
+    """ 
+    Get all users except for the user
+    user_email 
+    """
+    users = UserManager.get_all_users()
 
 # Get the list of users corresponding to the searched input to be retrieved
 # from API gateway
@@ -78,13 +145,10 @@ def report(email):
         # create the response with the reported users 
         return jsonify(reported_user.serialize()), 200
     
-
-
 # Get the list of registered users to be retrieved from API gateway
 def get_all_users():
     # get all users from db
     users = UserManager.get_all_users()
- 
     if users is None:
         response = {'status': 'There are no users registered'}
         return jsonify(response), 404
