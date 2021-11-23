@@ -111,12 +111,17 @@ def get_badwords(user_id):
     }
     return jsonify(response_object), 200
 
+# Get the list of registered users to be retrieved from API gateway
 def get_all_users():
-    """ 
-    Get all users except for the user
-    user_email 
-    """
+    # get all users from db
     users = UserManager.get_all_users()
+ 
+    if users is None:
+        response = {'status': 'There are no users registered'}
+        return jsonify(response), 404
+    # create the response with the list of users 
+    return jsonify(users_response = [user.serialize() for user in users]), 200
+
 
 # Get the list of users corresponding to the searched input to be retrieved
 # from API gateway
