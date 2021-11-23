@@ -27,6 +27,7 @@ def upgrade():
     sa.Column('password', sa.Unicode(length=128), nullable=True),
     sa.Column('birthdate', sa.DateTime(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('reports', sa.Integer(), nullable= True, default = 0),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.Column('authenticated', sa.Boolean(), nullable=True),
     sa.Column('forbidden_words', sa.Unicode(length = 1024), nullable = True, default = ''),
