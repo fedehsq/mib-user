@@ -49,6 +49,29 @@ paths:
           description: User not found
         default:
           description: An error occured during retrieving the user
+    put:
+      summary: Update the profile info of current user
+      tags: [ User ]
+      operationId: mib.resources.users.edit_user
+      parameters:
+        - name: user_id
+          description: User Unique Id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update customer inside microservice app
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        200:
+          description: Current user has update his personal info
+        default:
+          description: Error during update of the user
 
     delete:
       tags: [ User ]
@@ -89,6 +112,7 @@ paths:
           description: User not found
         default:
           description: An error occured during retrieving the user
+
   /authenticate:
     post:
       summary: Authenticate a user
@@ -107,7 +131,6 @@ paths:
               properties:
                 email:
                   type: string
-                  format: email
                   example: user@studenti.unipi.it
                 password:
                   type: string
@@ -154,8 +177,27 @@ paths:
       operationId: mib.resources.users.get_all_users
       responses:
         200:
-          description: Users list can be retrieved
-      
+          description: Users list can be retrieved    
+
+  /badwords/{user_id}:
+    get:
+      tags: [ User ]
+      description: Get the badwords of user by its id
+      operationId: mib.resources.users.get_badwords
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Return user's badwords
+        default:
+          description: An error occured during retrieving the user's badwords
+
 components:
   schemas:
     User:
@@ -190,18 +232,32 @@ components:
           example: 'abcd1234'
           minLength: 1
           maxLength: 127
-    
+          
     UpdateUser:
       required:
-        - email
-        - password
+        - firstname
+        - lastname
+        - birthdate
       type: object
       properties:
+        firstname:
+          type: string
+          description: First name of customer
+          example: Mario
+        lastname:
+          type: string
+          description: Last name of customer
+          example: Rossi
         email:
           type: string
           description: Customer email
           example: mario.rossi@example.org
           format: email
+        birthdate:
+          type: string
+          description: Customer birthdate
+          example: '01/01/2020'
+          format: date
         password:
           type: string
           description: Customer password

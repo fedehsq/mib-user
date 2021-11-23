@@ -5,11 +5,12 @@ from mib import db
 class User(db.Model):
     """Representation of User model."""
 
+
     # The name of the table that we explicitly set
     __tablename__ = 'User'
 
     # A list of fields to be serialized
-    SERIALIZE_LIST = ['id', 'email', 'is_active', 'authenticated', 'deleted', 'is_blocked', 'photo']
+    SERIALIZE_LIST = ['id', 'email', 'first_name', 'last_name', 'birthdate', 'is_active', 'authenticated', 'deleted', 'is_blocked', 'photo']
 
     # All fields of user
     photo = db.Column(db.String)
@@ -21,7 +22,7 @@ class User(db.Model):
     birthdate = db.Column(db.DateTime())
     is_active = db.Column(db.Boolean, default = True)
     authenticated = db.Column(db.Boolean, default = True)
-    forbidden_words = db.Column(db.Unicode(1024), default = "")
+    # forbidden_words = db.Column(db.Unicode(1024), default = "")
     is_blocked = db.Column(db.Boolean, default = False)
     deleted = db.Column(db.Boolean, default = False)
     # blacklist = db.Column(db.Unicode(1024), default = "")

@@ -9,10 +9,11 @@ class UserManager(Manager):
         Manager.create(user=user)
 
     def get_all_users():
-        """ This metod gets from the database 
-        all users except for the one with user_email """
+        """ 
+            This metod gets from the database 
+            all users except for the one with user_email 
+        """
         return User.query.all()
-
 
     @staticmethod
     def retrieve_by_id(id_):
