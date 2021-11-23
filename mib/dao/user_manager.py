@@ -1,5 +1,6 @@
+from werkzeug.wrappers import ResponseStream
 from mib.dao.manager import Manager
-from mib.models.user import User
+from mib.models.user import User, db
 
 
 class UserManager(Manager):
@@ -9,10 +10,35 @@ class UserManager(Manager):
         Manager.create(user=user)
 
     def get_all_users():
-        """ This metod gets from the database 
-        all users except for the one with user_email """
+        """ 
+        This metod gets from the database 
+        all registered users 
+        """
         return User.query.all()
+    
+    # This method retrieves a list of user filtered with searched input
+    def get_searched_users(searched_input):
+        tmp = []
+        users = User.query.all() 
+        # for each user search if the searched input is in the email, or firstname or lastname
+        # if so, save the user in tmp
+        for u in users:
+            if searched_input.lower() in u.first_name.lower() or searched_input.lower() in u.last_name.lower() or searched_input.lower() in u.email.lower():
+                tmp.append(u)
+        return tmp
 
+    # This method reports and returns the user corresponding to email, if it exists
+    def report(email):
+        reported_user = User.query.filter(User.email == email).first()
+        if reported_user != None:
+            reported_user.reports += 1
+            print("NUM REPORTS:")
+            print(reported_user.reports)
+            # check if report number is 3, so the user will be blocked and can't login anymore
+            if reported_user.reports == 3:
+                reported_user.is_blocked = True
+            db.session.commit()
+        return reported_user
 
     @staticmethod
     def retrieve_by_id(id_):

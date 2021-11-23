@@ -70,6 +70,40 @@ paths:
         default:
           description: An error occured during the deletion the user
 
+  /search_users/{searched_input}:
+    post:
+      summary: Get the list of all users with a parameter corresponding to searched input
+      tags: [ Users ]
+      operationId: mib.resources.users.get_searched_users
+      parameters:
+        - name: searched_input
+          description: searched input to get the filtered users list
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Users filtered list can be retrieved
+
+  /report/{email}:
+    post:
+      summary: Report a user filling the form 
+      tags: [ Users ]
+      operationId: mib.resources.users.report
+      parameters:
+        - name: email
+          description: email of the user to be reported
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User can be reported
+        404:
+          description: User doesn't exist
+
   /user_email/{user_email}:
     get:
       tags: [ User ]
@@ -107,7 +141,6 @@ paths:
               properties:
                 email:
                   type: string
-                  format: email
                   example: user@studenti.unipi.it
                 password:
                   type: string
@@ -178,7 +211,6 @@ components:
           type: string
           description: Customer email
           example: mario.rossi@example.org
-          format: email
         birthdate:
           type: string
           description: Customer birthdate
@@ -201,7 +233,6 @@ components:
           type: string
           description: Customer email
           example: mario.rossi@example.org
-          format: email
         password:
           type: string
           description: Customer password

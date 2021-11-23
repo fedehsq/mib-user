@@ -51,17 +51,44 @@ def get_user(user_id):
 
     return jsonify(user.serialize()), 200
 
-def get_all_users():
-    """ Get all users except for the user
-    user_email """
-
-    users = UserManager.get_all_users()
-    print("sono nel mib-user")
+# Get the list of users corresponding to the searched input to be retrieved
+# from API gateway
+def get_searched_users(searched_input):
+    # get the filtered list
+    users = UserManager.get_searched_users(searched_input)
     print(users)
+
     if users is None:
-        print("non c'è")
         response = {'status': 'There are no users registered'}
         return jsonify(response), 404
+
+    # create the response with the filtered list of users 
+    return jsonify(searched_users = [user.serialize() for user in users]), 200
+
+# Report a user, if it exists
+# If not so, get a 404 response to the API gateway
+def report(email):
+    reported_user = UserManager.report(email)
+    # if reported_user returned from the function is None, it means
+    # that the email doesn't correspond to anyone
+    if reported_user is None:
+        response = {'status': 'There are no users registered with this email'}
+        return jsonify(response), 404
+    else:
+        # create the response with the reported users 
+        return jsonify(reported_user.serialize()), 200
+    
+
+
+# Get the list of registered users to be retrieved from API gateway
+def get_all_users():
+    # get all users from db
+    users = UserManager.get_all_users()
+ 
+    if users is None:
+        response = {'status': 'There are no users registered'}
+        return jsonify(response), 404
+    # create the response with the list of users 
     return jsonify(users_response = [user.serialize() for user in users]), 200
 
 def get_user_by_email(user_email):

@@ -20,6 +20,7 @@ class User(db.Model):
     password = db.Column(db.Unicode(128))
     birthdate = db.Column(db.DateTime())
     is_active = db.Column(db.Boolean, default = True)
+    reports = db.Column(db.Integer, default = 0)
     authenticated = db.Column(db.Boolean, default = True)
     forbidden_words = db.Column(db.Unicode(1024), default = "")
     is_blocked = db.Column(db.Boolean, default = False)
