@@ -1,7 +1,9 @@
 from flask import request, jsonify
 from mib.dao.user_manager import UserManager
 from mib.dao.badword_manager import BadWordManager
+from mib.dao.blacklist_manager import BlacklistManager
 from mib.models.user import User
+from mib.models.blacklist import Blacklist
 from mib.models.badword import BadWord
 from datetime import datetime
 
@@ -19,6 +21,7 @@ def create_user():
         return jsonify({
             'status': 'Already present'
         }), 200
+    
 
     user = User()
     birthday = datetime.strptime(post_data.get('birthdate'), '%d/%m/%Y')
@@ -74,12 +77,27 @@ def edit_user(user_id):
             badword.user_id = user.id
             BadWordManager.create_badword(badword)
 
+    # delete all old blacklisted users
+    blacklist = BlacklistManager.retrieve_by_user_id(user.id)
+    for person in blacklist:
+        BlacklistManager.delete_blacklisted(person)
+    
+    # insert the updated blacklisted users
+    blacklist = post_data.get('blacklist').split(', ')
+    if blacklist[0] != '':
+        for person in blacklist:
+            blacklist = Blacklist()
+            blacklisted = (UserManager.retrieve_by_email(person))
+            if blacklisted != None:
+                blacklist.id_blacklisted = blacklisted.id
+                blacklist.id_user = user.id
+                BlacklistManager.create_blacklist(blacklist)
+            
     response_object = {
         'user': user.serialize(),
         'status': 'success',
         'message': 'Successfully updated',
     }
-
     return jsonify(response_object), 200
 
 
@@ -99,7 +117,7 @@ def get_user(user_id):
 
 def get_badwords(user_id):
     """
-    Get a user by its current id.
+    Get user's badwords by its current id.
 
     :param user_id: user it
     :return: json response
@@ -111,14 +129,31 @@ def get_badwords(user_id):
     }
     return jsonify(response_object), 200
 
+def get_blacklist(user_id):
+    """
+    Get user's blacklist by its current id.
+
+    :param user_id: user it
+    :return: json response
+    """
+    blacklist = BlacklistManager.retrieve_by_user_id(user_id)
+    # For each blacklisted user id, get the user object and the response status
+    response_object = {
+        'blacklist': [(UserManager.retrieve_by_id(person.id_blacklisted)).serialize() for person in blacklist],
+        'status': 'success',
+    }
+    print(response_object)
+    return jsonify(response_object), 200
+
+
 # Get the list of registered users to be retrieved from API gateway
 def get_all_users():
     # get all users from db
     users = UserManager.get_all_users()
  
-    if users is None:
+    """if users is None:
         response = {'status': 'There are no users registered'}
-        return jsonify(response), 404
+        return jsonify(response), 404"""
     # create the response with the list of users 
     return jsonify(users_response = [user.serialize() for user in users]), 200
 
