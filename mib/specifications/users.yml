@@ -232,6 +232,25 @@ paths:
         default:
           description: An error occured during retrieving the user's badwords
 
+  /blacklist/{user_id}:
+    get:
+      tags: [ User ]
+      description: Get the blacklist of user by its id
+      operationId: mib.resources.users.get_blacklist
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Return user's blacklist
+        default:
+          description: An error occured during retrieving the user's blacklist
+
 components:
   schemas:
     User:

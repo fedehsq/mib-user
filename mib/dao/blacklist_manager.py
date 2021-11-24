@@ -6,7 +6,7 @@ from mib.models.blacklist import Blacklist, db
 class BlacklistManager(Manager):
 
     @staticmethod
-    def add_blacklisted(blacklisted: Blacklist):
+    def create_blacklist(blacklisted: Blacklist):
         """
         Add a row to the blacklist table
         """
@@ -18,7 +18,8 @@ class BlacklistManager(Manager):
         Get all blacklisted users for the user corresponding to id_user
         """
         Manager.check_none(id_user = id_user)
-        return Blacklist.query.get(id_user)
+        return Blacklist.query.filter(Blacklist.id_user == id_user).all()
+        
     
     @staticmethod
     def delete_blacklisted(blacklisted: Blacklist):
@@ -27,13 +28,7 @@ class BlacklistManager(Manager):
         """
         Manager.delete(blacklisted = blacklisted)
     
-    @staticmethod
-    def delete_all_by_user_id(id_user):
-        """
-        Delete all blacklisted users for the user corresponding to id_user
-        """
-        for blacklisted in Manager.retrieve_by_user_id(id_user):
-            Manager.delete_blacklisted(blacklisted)
+    
 
 
 
