@@ -23,7 +23,9 @@ class UserManager(Manager):
         # for each user search if the searched input is in the email, or firstname or lastname
         # if so, save the user in tmp
         for u in users:
-            if searched_input.lower() in u.first_name.lower() or searched_input.lower() in u.last_name.lower() or searched_input.lower() in u.email.lower():
+            if searched_input.lower() in u.first_name.lower() \
+                or searched_input.lower() in u.last_name.lower() \
+                    or searched_input.lower() in u.email.lower():
                 tmp.append(u)
         return tmp
 
@@ -32,8 +34,6 @@ class UserManager(Manager):
         reported_user = User.query.filter(User.email == email).first()
         if reported_user != None:
             reported_user.reports += 1
-            print("NUM REPORTS:")
-            print(reported_user.reports)
             # check if report number is 3, so the user will be blocked and can't login anymore
             if reported_user.reports == 3:
                 reported_user.is_blocked = True

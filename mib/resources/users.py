@@ -55,6 +55,9 @@ def edit_user(user_id):
     """
     post_data = request.get_json()
     user = UserManager.retrieve_by_id(user_id)
+    if user is None:
+        response = {'status': 'User not present'}
+        return jsonify(response), 404
     birthday = datetime.strptime(post_data.get('birthdate'), '%d/%m/%Y')
     user.set_password(post_data.get('password'))
     user.set_first_name(post_data.get('firstname'))
@@ -122,6 +125,10 @@ def get_badwords(user_id):
     :param user_id: user it
     :return: json response
     """
+    user = UserManager.retrieve_by_id(user_id)
+    if user is None:
+        response = {'status': 'User not present'}
+        return jsonify(response), 404
     badwords = BadWordManager.retrieve_badwords_by_user_id(user_id)
     response_object = {
         'badwords': [word.serialize() for word in badwords],
@@ -150,10 +157,6 @@ def get_blacklist(user_id):
 def get_all_users():
     # get all users from db
     users = UserManager.get_all_users()
- 
-    """if users is None:
-        response = {'status': 'There are no users registered'}
-        return jsonify(response), 404"""
     # create the response with the list of users 
     return jsonify(users_response = [user.serialize() for user in users]), 200
 
@@ -163,11 +166,9 @@ def get_all_users():
 def get_searched_users(searched_input):
     # get the filtered list
     users = UserManager.get_searched_users(searched_input)
-    print(users)
-
-    if users is None:
+    """if users is None:
         response = {'status': 'There are no users registered'}
-        return jsonify(response), 404
+        return jsonify(response), 404"""
 
     # create the response with the filtered list of users 
     return jsonify(searched_users = [user.serialize() for user in users]), 200
@@ -189,9 +190,6 @@ def report(email):
 def get_all_users():
     # get all users from db
     users = UserManager.get_all_users()
-    if users is None:
-        response = {'status': 'There are no users registered'}
-        return jsonify(response), 404
     # create the response with the list of users 
     return jsonify(users_response = [user.serialize() for user in users]), 200
 

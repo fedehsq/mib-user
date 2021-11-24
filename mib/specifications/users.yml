@@ -32,7 +32,7 @@ paths:
   /user/{user_id}:
     get:
       tags: [ User ]
-      description: Get a user by its id
+      summary: Get a user by its id
       operationId: mib.resources.users.get_user
       parameters:
         - name: user_id
@@ -70,6 +70,8 @@ paths:
       responses:
         200:
           description: Current user has update his personal info
+        404:
+          description: User not found
         default:
           description: Error during update of the user
 
@@ -95,7 +97,7 @@ paths:
 
   /search_users/{searched_input}:
     post:
-      summary: Get the list of all users with a parameter corresponding to searched input
+      summary: Get the list of all users for which parameters the searched input is a substring
       tags: [ Users ]
       operationId: mib.resources.users.get_searched_users
       parameters:
@@ -107,7 +109,9 @@ paths:
             type: string
       responses:
         200:
-          description: Users filtered list can be retrieved
+          description: Returns users filtered list
+        default:
+          description: An error occured during retrieving the filtered list
 
   /report/{email}:
     post:
@@ -123,9 +127,11 @@ paths:
             type: string
       responses:
         200:
-          description: User can be reported
+          description: User reported
         404:
           description: User doesn't exist
+        default:
+          description: An error occured reporting the user
 
   /user_email/{user_email}:
     get:
@@ -211,7 +217,10 @@ paths:
       operationId: mib.resources.users.get_all_users
       responses:
         200:
-          description: Users list can be retrieved    
+          description: Returns users list
+        default:
+          description: An error occured during retrieving the users
+        
 
   /badwords/{user_id}:
     get:
@@ -228,7 +237,9 @@ paths:
             format: int64
       responses:
         200:
-          description: Return user's badwords
+          description: Returns user's badwords
+        404:
+          description: User not found
         default:
           description: An error occured during retrieving the user's badwords
 
