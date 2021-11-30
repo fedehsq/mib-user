@@ -25,6 +25,23 @@ class BadWordManager(Manager):
         """
         Manager.create(badword = badword)
 
+    
+    @staticmethod
+    def create_badwords_by_user_id(id, badwords):
+        """
+        :param word: badwords
+        :param id_: user's id
+        Given the badwords add them to ser's badwords.
+        """
+        if badwords[0] != '':
+            for word in badwords:
+                badword = BadWord()
+                badword.word = word
+                badword.user_id = id
+                BadWordManager.create_badword(badword)
+
+    
+
 
     @staticmethod
     def delete_badword(badword: BadWord):

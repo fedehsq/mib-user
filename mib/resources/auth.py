@@ -10,22 +10,31 @@ def authenticate(auth):
     :return: the response 200 if credentials are correct, else 401
     """
     user: User = UserManager.retrieve_by_email(auth['email'])
-    response = {
-        'authentication': 'failure',
-        'user': None
-    }
-    print('codiceeeeeee')
-    print(response)
-    response_code = 401
-    if user:
-        if user.is_blocked:
-            # blocked user
-            response_code = 403
-        elif user.deleted:
-            # deleted user, awaiting delivery messages
-            response_code = 401
-        elif user.authenticate(auth['password']):
-            response['authentication'] = 'success'
-            response['user'] = user.serialize()
-            response_code = 200
+    if user is None:
+        response = {
+            'status': 'failure',
+            'message': 'User not found'
+        }
+        return jsonify(response), 404
+    if user.is_blocked:
+        # blocked user
+        response_code = 403
+        response = {
+            'status': 'failure',
+            'message': 'Blocked user',
+        }
+    elif user.authenticate(auth['password']):
+        response = {
+            'status': 'success',
+            'message': 'Operation done',
+            'body': user.serialize()
+        }
+        response_code = 200
+    else:
+        response = {
+            'status': 'failure',
+            'message': 'Incorrect credentials',
+            'body': user.serialize()
+        }
+        response_code = 400
     return jsonify(response), response_code

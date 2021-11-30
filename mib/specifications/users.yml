@@ -12,7 +12,7 @@ paths:
     post:
       summary: Add a new user
       tags:
-        - Users
+        - User
       operationId: mib.resources.users.create_user
       requestBody:
         description: Create a new customer inside microservice app
@@ -20,14 +20,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserFields'
       responses:
         201:
-          description: Created
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
         200:
           description: User already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Result status
+                    default: failure
+                  message:
+                    type: string
+                    description: Result message
+                    default: User already exists
         default:
-          description: Error during creation of the user
+          description: Error creating the user
 
   /user/{user_id}:
     get:
@@ -45,12 +63,20 @@ paths:
       responses:
         200:
           description: Return user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
-          description: An error occured during retrieving the user
+          description: An error occured retrieving the user
     put:
-      summary: Update the profile info of current user
+      summary: Update the profile info of user with user_id
       tags: [ User ]
       operationId: mib.resources.users.edit_user
       parameters:
@@ -66,18 +92,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUser'
+              $ref: '#/components/schemas/UserFields'
       responses:
         200:
-          description: Current user has update his personal info
+          description: User has update his personal info, returns it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUser'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
-          description: Error during update of the user
+          description: Error updating the user
 
     delete:
       tags: [ User ]
-      description: Delete a user by its id
+      summary: Delete the user with user_id
       operationId: mib.resources.users.delete_user
       parameters:
         - name: user_id
@@ -90,8 +124,25 @@ paths:
       responses:
         202:
           description: User deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Result status
+                    default: success
+                  message:
+                    type: string
+                    description: Result message
+                    default: Successfully deleted
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
           description: An error occured during the deletion the user
 
@@ -107,9 +158,14 @@ paths:
           required: true
           schema:
             type: string
+            
       responses:
         200:
           description: Returns users filtered list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
         default:
           description: An error occured during retrieving the filtered list
 
@@ -128,15 +184,32 @@ paths:
       responses:
         200:
           description: User reported
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Result status
+                    default: success
+                  message:
+                    type: string
+                    description: Result message
+                    default: User reported
         404:
           description: User doesn't exist
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/NotFound'
         default:
           description: An error occured reporting the user
 
   /user_email/{user_email}:
     get:
       tags: [ User ]
-      description: Get a user by its email
+      summary: Get a user by its email
       operationId: mib.resources.users.get_user_by_email
       parameters:
         - name: user_email
@@ -148,10 +221,18 @@ paths:
       responses:
         200:
           description: Return user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
-          description: An error occured during retrieving the user
+          description: An error occured retrieving the user
 
   /authenticate:
     post:
@@ -177,18 +258,11 @@ paths:
                   example: abcd123A
       responses:
         200:
-          description: User credentials are correct
+          description: User credentials are correct, returns the user
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  authentication:
-                    type: string
-                    description: "It can be failure or success"
-                    default: 'failure'
-                  user:
-                    $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
 
         400:
           description: User credentials are not correct
@@ -197,19 +271,32 @@ paths:
               schema:
                 type: object
                 properties:
-                  authentication:
+                  status:
                     type: string
-                    description: "It can be failure or success"
-                    default: 'failure'
-        default:
-          description: An error occured during login
+                    description: Result status
+                    default: failure
+                  message:
+                    type: string
+                    description: The user inserts incorrect credentials
+                    default: Incorrect credentials
+        403:
+          description: User is blocked
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error_message:
-                    type: string    
+                  status:
+                    type: string
+                    description: Result status
+                    default: failure
+                  message:
+                    type: string
+                    description: The user is blocked
+                    default: Blocked user
+        default:
+          description: An error occured during login
+
   /users:
     get:
       summary: Get the list of all users
@@ -218,14 +305,18 @@ paths:
       responses:
         200:
           description: Returns users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
         default:
-          description: An error occured during retrieving the users
+          description: An error occured retrieving the users
         
 
   /badwords/{user_id}:
     get:
-      tags: [ User ]
-      description: Get the badwords of user by its id
+      tags: [ Badwords ]
+      summary: Get the badwords of user with user_id
       operationId: mib.resources.users.get_badwords
       parameters:
         - name: user_id
@@ -238,15 +329,138 @@ paths:
       responses:
         200:
           description: Returns user's badwords
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Badwords'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
-          description: An error occured during retrieving the user's badwords
+          description: An error occured during retrieving the user's badwords   
+    post:
+      tags: [ Badwords ]
+      summary: Create the badwords of user with user_id
+      operationId: mib.resources.users.create_badwords
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - badwords
+              properties:
+                badwords:
+                   $ref: '#/components/schemas/BadwordsField'
+      responses:
+        201:
+          description: Returns user's created badwords
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Badwords'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured creating the user's badwords
+      
+    put:
+      tags: [ Badwords ]
+      summary: Update the badwords of user with user_id
+      operationId: mib.resources.users.update_badwords
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - badwords
+              properties:
+                badwords:
+                   $ref: '#/components/schemas/BadwordsField'
+      responses:
+        200:
+          description: Returns user's updated badwords
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Badwords'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured updating the user's badwords
+   
+    delete:
+      tags: [ Badwords ]
+      summary: Delete the badwords of user with user_id
+      operationId: mib.resources.users.delete_badwords
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        202:
+          description: Badwords deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Result status
+                    default: success
+                  message:
+                    type: string
+                    description: Result message
+                    default: Successfully deleted
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured updating the user's badwords
+      
 
   /blacklist/{user_id}:
     get:
-      tags: [ User ]
-      description: Get the blacklist of user by its id
+      tags: [ Blacklist ]
+      summary: Get the blacklist of user with user_id
       operationId: mib.resources.users.get_blacklist
       parameters:
         - name: user_id
@@ -258,20 +472,196 @@ paths:
             format: int64
       responses:
         200:
-          description: Return user's blacklist
+          description: Returns user's blacklist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blacklist'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
         default:
-          description: An error occured during retrieving the user's blacklist
+          description: An error occured retrieving the user's blacklist   
+    post:
+      tags: [ Blacklist ]
+      summary: Create the blacklist of user with user_id
+      operationId: mib.resources.users.create_blacklist
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - blacklist
+              properties:
+                blacklist:
+                   $ref: '#/components/schemas/BlacklistField'
+      responses:
+        201:
+          description: Returns user's created blacklist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blacklist'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured creating the user's blacklist
+      
+    put:
+      tags: [ Blacklist ]
+      summary: Update the blacklist of user with user_id
+      operationId: mib.resources.users.update_blacklist
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - blacklist
+              properties:
+                blacklist:
+                   $ref: '#/components/schemas/BlacklistField'
+      responses:
+        200:
+          description: Returns user's updated blacklist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blacklist'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured updating the user's blacklist
+   
+    delete:
+      tags: [ Blacklist ]
+      summary: Delete the blacklist of user with user_id
+      operationId: mib.resources.users.delete_blacklist
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        202:
+          description: Blacklist deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Result status
+                    default: success
+                  message:
+                    type: string
+                    description: Result message
+                    default: Successfully deleted
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        default:
+          description: An error occured updating the user's badwords
+      
+
 
 components:
   schemas:
     User:
       required:
-        - firstname
-        - lastname
-        - email
-        - birthdate
+        - status
+        - message
+        - body  
       type: object
       properties:
+        status:
+          type: string
+          description: status code message
+          example: success
+        message: 
+          type: string
+          description: operation result
+          example: Operation done
+        body:
+          $ref: '#/components/schemas/UserFields'
+    
+    Users:
+      required:
+        - status
+        - message
+        - body
+      type: object
+      properties:
+        status:
+          type: string
+          description: status code message
+          example: success
+        message: 
+          type: string
+          description: operation result
+          example: Operation done
+        body:
+          $ref: '#/components/schemas/UsersFields'
+
+    UsersFields:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserFields'
+
+    UserFields:
+      required:
+        - email
+        - firstname
+        - lastname
+        - birthdate
+        - password
+      type: object
+      properties:
+        photo:
+          type: string
+          description: Avatar of customer
+          example: base64photo
+        email:
+          type: string
+          description: Customer email
+          example: mario.rossi@example.org 
         firstname:
           type: string
           description: First name of customer
@@ -280,49 +670,96 @@ components:
           type: string
           description: Last name of customer
           example: Rossi
-        email:
-          type: string
-          description: Customer email
-          example: mario.rossi@example.org
-        birthdate:
-          type: string
-          description: Customer birthdate
-          example: '01/01/2020'
-          format: date
         password:
           type: string
           description: Customer password
           example: 'abcd1234'
           minLength: 1
           maxLength: 127
-          
+        birthdate:
+          type: string
+          description: Customer birthdate
+          example: '01/01/2020'
+          format: date
+    
     UpdateUser:
       required:
-        - firstname
-        - lastname
-        - birthdate
+        - status
+        - message
+        - body
       type: object
       properties:
-        firstname:
+        status:
           type: string
-          description: First name of customer
-          example: Mario
-        lastname:
+          description: status code message
+          example: success
+        message: 
           type: string
-          description: Last name of customer
-          example: Rossi
-        email:
+          description: operation result
+          example: Operation done
+        body:
+          $ref: '#/components/schemas/UserFields'
+
+    Badwords:
+      required:
+        - status
+        - message
+        - body
+      type: object
+      properties:
+        status:
           type: string
-          description: Customer email
-          example: mario.rossi@example.org
-        birthdate:
+          description: status code message
+          example: success
+        message: 
           type: string
-          description: Customer birthdate
-          example: '01/01/2020'
-          format: date
-        password:
+          description: operation result
+          example: Operation done
+        body:
+          $ref: '#/components/schemas/BadwordsField'
+    
+    Blacklist:
+      required:
+        - status
+        - message
+        - body
+      type: object
+      properties:
+        status:
           type: string
-          description: Customer password
-          example: 'abcd1234'
-          minLength: 1
-          maxLength: 127
+          description: status code message
+          example: success
+        message: 
+          type: string
+          description: operation result
+          example: Operation done
+        body:
+          $ref: '#/components/schemas/BlacklistField'
+
+    BadwordsField:
+      type: array
+      items:
+        type: string
+      example:
+        - hate
+        - devil
+
+    BlacklistField:
+      type: array
+      items:
+        type: string
+      example:
+        - example@ex.com
+        - devil@luci.com
+
+    NotFound:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Result status
+          default: failure
+        message:
+          type: string
+          description: Result message
+          default: User not found
