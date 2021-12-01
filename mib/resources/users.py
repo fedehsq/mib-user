@@ -79,10 +79,8 @@ def update_badwords(user_id):
     Returns the list of badwords
     """
     delete_badwords(user_id)
-    #BadWordManager.delete_badword(user_id)
     response, code = create_badwords(user_id)
     return response, 200 if code != 404 else code
-
 
 def create_blacklist(user_id):
     """
@@ -117,7 +115,6 @@ def create_blacklist(user_id):
     }
     return jsonify(response_object), 201
     
-
 def update_blacklist(user_id):
     """
     This method allows the update of the blacklist for the user with user_id.
@@ -127,8 +124,6 @@ def update_blacklist(user_id):
    # BlacklistManager.delete_blacklisted(user_id)
     response, code = create_blacklist(user_id)
     return response, 200 if code != 404 else code
-
-
 
 def edit_user(user_id):
     """
@@ -150,34 +145,6 @@ def edit_user(user_id):
     user.set_birthday(birthday)
     user.set_photo(post_data.get('photo'))
     UserManager.update_user(user)
-
-    """
-    # delete all old badwords
-    badwords = BadWordManager.retrieve_badwords_by_user_id(user.id)
-    for word in badwords:
-        BadWordManager.delete_badword(word)
-
-    # inserts new badwords
-    badwords = post_data.get('badwords').split(', ')
-    BadWordManager.create_badwords_by_user_id(user.id, badwords)
-
-    # delete all old blacklisted users
-    blacklist = BlacklistManager.retrieve_by_user_id(user.id)
-    for person in blacklist:
-        BlacklistManager.delete_blacklisted(person)
-    
-    # insert the updated blacklisted users
-    blacklist = post_data.get('blacklist').split(', ')
-    if blacklist[0] != '':
-        for person in blacklist:
-            blacklist = Blacklist()
-            blacklisted = (UserManager.retrieve_by_email(person))
-            if blacklisted != None:
-                blacklist.id_blacklisted = blacklisted.id
-                blacklist.id_user = user.id
-                BlacklistManager.create_blacklist(blacklist)
-    """
-            
     response_object = {
         'status': 'success',
         'message': 'Successfully updated',

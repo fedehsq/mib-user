@@ -29,18 +29,6 @@ class UserManager(Manager):
                 tmp.append(u)
         return tmp
 
-    """
-    # This method reports and returns the user corresponding to email, if it exists
-    def report(email):
-        reported_user = User.query.filter(User.email == email).first()
-        if reported_user != None:
-            reported_user.reports += 1
-            # check if report number is 3, so the user will be blocked and can't login anymore
-            if reported_user.reports == 3:
-                reported_user.is_blocked = True
-            db.session.commit()
-        return reported_user"""
-
     @staticmethod
     def retrieve_by_id(id_):
         Manager.check_none(id = id_)

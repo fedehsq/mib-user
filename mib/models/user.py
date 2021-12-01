@@ -2,11 +2,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from mib import db
 
+
 class User(db.Model):
     """
     Representation of User model.
     """
-
 
     # The name of the table that we explicitly set
     __tablename__ = 'User'
@@ -25,19 +25,6 @@ class User(db.Model):
     reports = db.Column(db.Integer, default = 0)
     is_blocked = db.Column(db.Boolean, default = False)
 
-    # authenticated = db.Column(db.Boolean)
-    # forbidden_words = db.Column(db.Unicode(1024), default = "")
-    # is_active = db.Column(db.Boolean, default = True)
-    # deleted = db.Column(db.Boolean, default = False)
-    # blacklist = db.Column(db.Unicode(1024), default = "")
-    # lottery_number = db.Column(db.Integer, default = 0)
-    # points = db.Column(db.Integer, default = 0)
-    # photo_path = db.Column(db.Unicode(128), default = 'profile_pics/profile_pic.svg')
-
-    """def __init__(self, *args, **kw):
-        super(User, self).__init__(*args, **kw)
-        self.authenticated = False"""
-
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -50,18 +37,11 @@ class User(db.Model):
     def set_last_name(self, name):
         self.last_name = name
 
-    """def is_authenticated(self):
-        return self.authenticated"""
-
     def set_birthday(self, birthdate):
         self.birthdate = birthdate
 
     def authenticate(self, password):
         return check_password_hash(self.password, password)
-        """self.authenticated = checked
-        print('stampo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        print(self.authenticated)
-        return self.authenticated"""
 
     def set_photo(self,photo):
         self.photo = photo
