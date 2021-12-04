@@ -141,6 +141,30 @@ def edit_user(user_id):
     }
     return jsonify(response_object), 200
 
+def update_points(user_id):
+    """
+    Update points of user_id
+
+    :param user_id the id of user that win lottery
+    :return json response
+    """
+    user = UserManager.retrieve_by_id(user_id)
+    if user is None:
+        response = {'status': 'User not present'}
+        return jsonify(response), 404 
+    points = user.points + 100
+    user.set_points(points)
+    print(user.points)
+    UserManager.update_user(user)
+    
+
+    response_object = {
+        'user': user.serialize(),
+        'status': 'success',
+        'message': 'Successfully updated',
+    }
+
+    return jsonify(response_object), 200
 
 def get_user(user_id):
     """
