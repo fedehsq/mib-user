@@ -167,6 +167,27 @@ paths:
                 $ref: '#/components/schemas/Users'
         default:
           description: An error occured during retrieving the filtered list
+          
+  /user/updatepoints/{user_id}:
+    put:
+      summary: Update users's points after he win lottery
+      tags: [ Points ]
+      operationId: mib.resources.users.update_points
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Update success
+        404:
+          description: User not found
+        default:
+          description: An error occured during updating user's record
 
   /report/{email}:
     post:
