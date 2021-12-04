@@ -1,6 +1,8 @@
 from werkzeug.wrappers import ResponseStream
 from mib.dao.manager import Manager
 from mib.models.user import User, db
+from sqlalchemy import func
+from sqlalchemy.sql.expression import or_
 
 
 class UserManager(Manager):
@@ -18,16 +20,11 @@ class UserManager(Manager):
     
     # This method retrieves a list of user filtered with searched input
     def get_searched_users(searched_input):
-        tmp = []
-        users = User.query.all() 
-        # for each user search if the searched input is in the email, or firstname or lastname
-        # if so, save the user in tmp
-        for u in users:
-            if searched_input.lower() in u.first_name.lower() \
-                or searched_input.lower() in u.last_name.lower() \
-                    or searched_input.lower() in u.email.lower():
-                tmp.append(u)
-        return tmp
+        filtered_users = User.query.filter(or_(\
+            func.lower(User.first_name).contains(searched_input.lower()),
+            func.lower(User.last_name).contains(searched_input.lower()),
+            func.lower(User.email).contains(searched_input.lower()))).all()
+        return filtered_users
 
     @staticmethod
     def retrieve_by_id(id_):

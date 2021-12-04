@@ -20,7 +20,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserFields'
+              $ref: '#/components/schemas/UserAuthFields'
       responses:
         201:
           description: User created
@@ -28,7 +28,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-
         200:
           description: User already exists
           content:
@@ -92,7 +91,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserFields'
+              $ref: '#/components/schemas/UserAuthFields'
       responses:
         200:
           description: User has update his personal info, returns it
@@ -252,7 +251,7 @@ paths:
               properties:
                 email:
                   type: string
-                  example: user@studenti.unipi.it
+                  example: mario.rossi@example.org
                 password:
                   type: string
                   example: abcd123A
@@ -600,8 +599,6 @@ paths:
         default:
           description: An error occured updating the user's badwords
       
-
-
 components:
   schemas:
     User:
@@ -620,7 +617,7 @@ components:
           description: operation result
           example: Operation done
         body:
-          $ref: '#/components/schemas/UserFields'
+          $ref: '#/components/schemas/UserFieldsWithPoints'
     
     Users:
       required:
@@ -638,14 +635,19 @@ components:
           description: operation result
           example: Operation done
         body:
-          $ref: '#/components/schemas/UsersFields'
+          $ref: '#/components/schemas/UsersFieldsWithPoints'
 
     UsersFields:
       type: array
       items:
         $ref: '#/components/schemas/UserFields'
+    
+    UsersFieldsWithPoints:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserFieldsWithPoints'
 
-    UserFields:
+    UserAuthFields:
       required:
         - email
         - firstname
@@ -662,6 +664,7 @@ components:
           type: string
           description: Customer email
           example: mario.rossi@example.org 
+          format: email
         firstname:
           type: string
           description: First name of customer
@@ -674,13 +677,79 @@ components:
           type: string
           description: Customer password
           example: 'abcd1234'
-          minLength: 1
+          minLength: 5
           maxLength: 127
         birthdate:
           type: string
           description: Customer birthdate
           example: '01/01/2020'
           format: date
+
+    UserFields:
+      required:
+        - email
+        - firstname
+        - lastname
+        - birthdate
+      type: object
+      properties:
+        photo:
+          type: string
+          description: Avatar of customer
+          example: base64photo
+        email:
+          type: string
+          description: Customer email
+          example: mario.rossi@example.org 
+          format: email
+        firstname:
+          type: string
+          description: First name of customer
+          example: Mario
+        lastname:
+          type: string
+          description: Last name of customer
+          example: Rossi
+        birthdate:
+          type: string
+          description: Customer birthdate
+          example: '01/01/2020'
+          format: date
+
+    UserFieldsWithPoints:
+      required:
+        - email
+        - firstname
+        - lastname
+        - birthdate
+      type: object
+      properties:
+        photo:
+          type: string
+          description: Avatar of customer
+          example: base64photo
+        email:
+          type: string
+          description: Customer email
+          example: mario.rossi@example.org 
+          format: email
+        firstname:
+          type: string
+          description: First name of customer
+          example: Mario
+        lastname:
+          type: string
+          description: Last name of customer
+          example: Rossi
+        birthdate:
+          type: string
+          description: Customer birthdate
+          example: '01/01/2020'
+          format: date
+        points:
+          type: integer
+          description: Customer lottery points
+          default: 0
     
     UpdateUser:
       required:
@@ -698,7 +767,7 @@ components:
           description: operation result
           example: Operation done
         body:
-          $ref: '#/components/schemas/UserFields'
+          $ref: '#/components/schemas/UserFieldsWithPoints'
 
     Badwords:
       required:

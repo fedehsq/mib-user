@@ -32,22 +32,11 @@ def create_user():
     user.set_birthday(birthday)
     user.set_photo(post_data.get('photo'))
     UserManager.create_user(user)
-
-    """# badwords for user
-    badwords = post_data.get('badwords').split(', ')
-    BadWordManager.create_badwords_by_user_id(user.id, badwords)
-    for word in badwords:
-        badword = BadWord()
-        badword.word = word
-        badword.user_id = user.id
-        BadWordManager.create_badword(badword)"""
-
     response_object = {
         'status': 'success',
         'message': 'Operarion done',
         'body': user.serialize(),
     }
-
     return jsonify(response_object), 201
 
 def create_badwords(user_id):

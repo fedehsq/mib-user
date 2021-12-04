@@ -12,7 +12,7 @@ class User(db.Model):
     __tablename__ = 'User'
 
     # A list of fields to be serialized
-    SERIALIZE_LIST = ['id', 'email', 'first_name', 'last_name', 'birthdate', 'photo', 'is_blocked']
+    SERIALIZE_LIST = ['id', 'email', 'first_name', 'last_name', 'birthdate', 'photo', 'points', 'is_blocked']
 
     # All fields of user
     photo = db.Column(db.String)
@@ -23,6 +23,7 @@ class User(db.Model):
     password = db.Column(db.Unicode(128))
     birthdate = db.Column(db.DateTime())
     reports = db.Column(db.Integer, default = 0)
+    points = db.Column(db.Integer, default = 0)
     is_blocked = db.Column(db.Boolean, default = False)
 
     def set_password(self, password):
@@ -43,8 +44,11 @@ class User(db.Model):
     def authenticate(self, password):
         return check_password_hash(self.password, password)
 
-    def set_photo(self,photo):
+    def set_photo(self, photo):
         self.photo = photo
+        
+    def set_points(self, points):
+        self.points = points
         
     def serialize(self):
         return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])

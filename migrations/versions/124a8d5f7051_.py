@@ -27,6 +27,7 @@ def upgrade():
     sa.Column('password', sa.Unicode(length=128), nullable=True),
     sa.Column('birthdate', sa.DateTime(), nullable=True),
     sa.Column('reports', sa.Integer(), nullable= True, default = 0),
+    sa.Column('points', sa.Integer(), nullable= True, default = 0),
     sa.Column('is_blocked', sa.Boolean(), nullable=True, default = False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
