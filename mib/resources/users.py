@@ -151,19 +151,20 @@ def update_points(user_id):
     user = UserManager.retrieve_by_id(user_id)
     if user is None:
         response = {'status': 'User not present'}
-        return jsonify(response), 404 
-    points = user.points + 100
+        return jsonify(response), 404
+    json = request.get_json()
+    points = user.points + 100 \
+        if json['user/updatepoints'] == 'increase' \
+        else user.points - 150
     user.set_points(points)
     print(user.points)
     UserManager.update_user(user)
-    
-
     response_object = {
-        'user': user.serialize(),
         'status': 'success',
         'message': 'Successfully updated',
+        'body': user.serialize(),
     }
-
+    print('ritorno')
     return jsonify(response_object), 200
 
 def get_user(user_id):

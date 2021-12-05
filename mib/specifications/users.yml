@@ -170,8 +170,8 @@ paths:
           
   /user/updatepoints/{user_id}:
     put:
-      summary: Update users's points after he win lottery
-      tags: [ Points ]
+      summary: Update users's points after he wins lottery
+      tags: [ User ]
       operationId: mib.resources.users.update_points
       parameters:
         - name: user_id
