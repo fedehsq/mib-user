@@ -42,7 +42,7 @@ def create_app():
     # getting the flask app
     app = api_app.app
 
-    flask_env = os.getenv('FLASK_ENV', 'None')
+    flask_env = os.getenv('FLASK_ENV', 'development')
     if flask_env == 'development':
         config_object = 'config.DevConfig'
     elif flask_env == 'testing':
