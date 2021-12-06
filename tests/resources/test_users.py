@@ -209,7 +209,7 @@ class TestUsers(ViewTest):
 
         # Updating lottery points of existing user
         user = self.login_test_user()       
-        rv = self.client.put('/user/updatepoints/%d' % user.id)
+        rv = self.client.put('/user/updatepoints/%d' % user.id, json = {'user/updatepoints' : 'increase'})
         assert rv.status_code == 200
 
         # Updating lottery points of not existing user

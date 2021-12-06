@@ -6,3 +6,8 @@ install:
 - pip install tox
 script:
 - tox -e $TOX_ENV
+deploy:
+  provider: script
+  script: bash test.sh
+  on:
+    branch: master
