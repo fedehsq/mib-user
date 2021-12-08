@@ -8,9 +8,9 @@ class Blacklist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     # user requester
-    id_user = db.Column(db.Integer(), ForeignKey('User.id')) 
+    id_user = db.Column(db.Integer()) 
     # user in the blacklist
-    id_blacklisted = db.Column(db.Integer(), ForeignKey('User.id'))  
+    id_blacklisted = db.Column(db.Integer())  
 
     def __init__(self, *args, **kw):
         super(Blacklist, self).__init__(*args, **kw)

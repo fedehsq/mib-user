@@ -224,11 +224,16 @@ def get_blacklist(user_id):
         return jsonify(response), 404
 
     blacklist = BlacklistManager.retrieve_by_user_id(user_id)
+    blist_email = []
+    for person in blacklist:
+        user = UserManager.retrieve_by_id(person.id_blacklisted)
+        if user != None:
+            blist_email.append(user.email)
     # For each blacklisted user id, get the user object and the response status
     response_object = {
         'status': 'success',
         'message': 'Operation done',
-        'body': [(UserManager.retrieve_by_id(person.id_blacklisted)).email for person in blacklist],
+        'body': blist_email,
     }
     return jsonify(response_object), 200
 
