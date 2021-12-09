@@ -6,21 +6,21 @@ University of Pisa.
 
 ## Team info
 
-- The *squad id* is **<SQUAD_ID>**
-- The *team leader* is *<TEAM_LEADER>*
+- The *squad id* is **9**
+- The *team leader* is Francesco Kotopulos De Angelis
 
 #### Members
-
 Mark with *bold* the person(s) that has developed this microservice.
 
-|Name and Surname    | Email                         |
-|--------------------|-------------------------------|
-|*Mario Rossi*       |mario.rossi@unipi.it           |
-|Antonio Lupo        |antonio.lupo@unipi.it          |
-|*Susanna Lopez*     |susy.lopez@mit.edu             |
 
+|         Name and Surname         |              Email                  |
+| ------------------------------   | ----------------------------------- |
+| *Federico Bernacca*              | f.bernacca@studenti.unipi.it        |
+| *Paola Petri*                    | p.petri1@studenti.unipi.it          |
+| Nicolò Pierami                   | n.pierami@studenti.unipi.it         |
+| Francesco Kotopulos De Angelis   | f.kotopulosdeange@studenti.unipi.it |
+| Manfredo Facchini                | m.facchini1@studenti.unipi.it       |
 
-## Instructions
 
 ### Initialization
 
@@ -84,7 +84,9 @@ If you are developing application and you want to have the debug tools, you can 
 
 ### Run tests
 
-To run all the tests, execute the following command:
+To run all the tests, once downloaded, execute the following command:
+
+`bash erase_db.sh`
 
 `python -m pytest`
 
